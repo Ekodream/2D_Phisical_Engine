@@ -1,0 +1,3 @@
+D:/Documents/CS/Projects/2D_Phisical_Engine/build/CMakeFiles/physics_app.dir
+D:/Documents/CS/Projects/2D_Phisical_Engine/build/CMakeFiles/ALL_BUILD.dir
+D:/Documents/CS/Projects/2D_Phisical_Engine/build/CMakeFiles/ZERO_CHECK.dir
