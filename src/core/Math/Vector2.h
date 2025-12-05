@@ -15,4 +15,4 @@ struct Vector2 {
     double length() const { return std::sqrt(x * x + y * y); }
 };
 
-} // namespace engine
+} 

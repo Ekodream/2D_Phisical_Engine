@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include <filesystem>
+#include <optional>
 
 #ifdef ENABLE_SFML
 
@@ -65,15 +66,67 @@ void Renderer::handleEvents() {
         const sf::Event& event = *eventOpt;
         if (event.is<sf::Event::Closed>()) {
             window->close();
+            continue;
         }
+
         if (event.is<sf::Event::KeyPressed>()) {
             if (const auto* kp = event.getIf<sf::Event::KeyPressed>()) {
+                // Close on Escape
                 if (kp->code == sf::Keyboard::Key::Escape) {
                     window->close();
+                    continue;
                 }
+                // Queue key event
+                InputEvent ie;
+                ie.type = InputType::KeyPressed;
+                ie.key = static_cast<int>(kp->code);
+                inputQueue.push_back(ie);
             }
+            continue;
+        }
+
+        if (event.is<sf::Event::MouseButtonPressed>()) {
+            if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>()) {
+                mouseDownPos = engine::Vector2(static_cast<double>(mp->position.x), static_cast<double>(mp->position.y));
+                mouseDown = true;
+                mouseDownButton = static_cast<int>(mp->button);
+            }
+            continue;
+        }
+
+        if (event.is<sf::Event::MouseButtonReleased>()) {
+            if (const auto* mr = event.getIf<sf::Event::MouseButtonReleased>()) {
+                engine::Vector2 upPos(static_cast<double>(mr->position.x), static_cast<double>(mr->position.y));
+                if (mouseDown) {
+                    InputEvent ie;
+                    // If the drag distance is small, treat as click
+                    const double dx = upPos.x - mouseDownPos.x;
+                    const double dy = upPos.y - mouseDownPos.y;
+                    const double dist2 = dx*dx + dy*dy;
+                    if (dist2 < 4.0) {
+                        ie.type = InputType::MouseClick;
+                        ie.pos = upPos;
+                    } else {
+                        ie.type = InputType::MouseDrag;
+                        ie.pos = mouseDownPos;
+                        ie.pos2 = upPos;
+                    }
+                    ie.mouseButton = mouseDownButton;
+                    inputQueue.push_back(ie);
+                }
+                mouseDown = false;
+                mouseDownButton = -1;
+            }
+            continue;
         }
     }
+}
+
+std::optional<Renderer::InputEvent> Renderer::pollInput() {
+    if (inputQueue.empty()) return std::nullopt;
+    InputEvent ie = inputQueue.front();
+    inputQueue.erase(inputQueue.begin());
+    return ie;
 }
 
 void Renderer::drawCircle(const Vector2& center, double radius, const sf::Color& color) {
@@ -126,6 +179,16 @@ void Renderer::drawVelocityVector(const PointMass& p, double scale, const sf::Co
 
     // Draw arrowhead (simple version: small circle at end)
     drawCircle(endPos, 2.0, color);
+}
+
+void Renderer::drawCircleOutline(const Vector2& center, double radius, const sf::Color& color, float thickness) {
+    if (!window) return;
+    sf::CircleShape circle(static_cast<float>(radius));
+    circle.setPosition(sf::Vector2f(static_cast<float>(center.x - radius), static_cast<float>(center.y - radius)));
+    circle.setFillColor(sf::Color::Transparent);
+    circle.setOutlineThickness(thickness);
+    circle.setOutlineColor(color);
+    window->draw(circle);
 }
 
 } // namespace engine

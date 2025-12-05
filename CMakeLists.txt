@@ -25,6 +25,8 @@ set(SOURCES
     src/core/Math/Vector2.cpp
 )
 
+list(APPEND SOURCES src/core/Physics/Collision.cpp)
+
 if(USE_SFML)
     list(APPEND SOURCES src/render/Renderer.cpp)
 endif()

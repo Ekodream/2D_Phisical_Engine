@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "../core/Math/Vector2.h"
 #include "../core/Physics/Body.h"
+#include <optional>
+#include <vector>
 
 namespace engine {
 
@@ -26,6 +28,20 @@ public:
     // Draw physics objects
     void drawPointMass(const PointMass& p, double radius = 5.0, const sf::Color& color = sf::Color::Green);
     void drawVelocityVector(const PointMass& p, double scale = 1.0, const sf::Color& color = sf::Color::Red);
+    void drawCircleOutline(const Vector2& center, double radius, const sf::Color& color = sf::Color::White, float thickness = 2.0f);
+
+    // Input events (mouse click, mouse drag, key press)
+    enum class InputType { None, MouseClick, MouseDrag, KeyPressed };
+    struct InputEvent {
+        InputType type = InputType::None;
+        engine::Vector2 pos;       // for MouseClick: click pos; for MouseDrag: start
+        engine::Vector2 pos2;      // for MouseDrag: release pos
+        int key = -1;              // for KeyPressed: sf::Keyboard::Key
+        int mouseButton = -1;      // for Mouse events: sf::Mouse::Button
+    };
+
+    // Poll the next input event (if any). Returns std::nullopt when none available.
+    std::optional<InputEvent> pollInput();
 
 private:
     std::unique_ptr<sf::RenderWindow> window;
@@ -34,6 +50,12 @@ private:
     int windowHeight;
 
     bool loadFont();
+
+    // Input handling
+    std::vector<InputEvent> inputQueue;
+    engine::Vector2 mouseDownPos;
+    bool mouseDown = false;
+    int mouseDownButton = -1;
 };
 
 } // namespace engine

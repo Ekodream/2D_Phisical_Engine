@@ -7,8 +7,12 @@ struct PointMass {
     Vector2 position;
     Vector2 velocity;
     double mass;
-    PointMass(const Vector2& p = Vector2(), const Vector2& v = Vector2(), double m = 1.0)
-        : position(p), velocity(v), mass(m) {}
+    double radius = 6.0;        // visual / collision radius (pixels)
+    double restitution = 0.8;   // coefficient of restitution (0..1)
+
+    PointMass(const Vector2& p = Vector2(), const Vector2& v = Vector2(), double m = 1.0,
+              double r = 6.0, double rest = 0.8)
+        : position(p), velocity(v), mass(m), radius(r), restitution(rest) {}
 
     void applyForce(const Vector2& force, double dt) {
         Vector2 acc = force * (1.0 / mass);
@@ -18,6 +22,7 @@ struct PointMass {
     void integrate(double dt) {
         position += velocity * dt;
     }
+    double kineticEnergy() const { return 0.5 * mass * (velocity.x*velocity.x + velocity.y*velocity.y); }
 };
 
 } // namespace engine

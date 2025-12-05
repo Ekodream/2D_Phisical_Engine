@@ -135,6 +135,11 @@ mkdir build; cd build; cmake ..; cmake --build . --config Release; .\physics_app
 ```
 
 **With GUI (vcpkg):**
+
+
+"You need change the path of vcpkg to your own path"
+
+
 ```powershell
-mkdir build; cd build; cmake -DUSE_SFML=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake ..; cmake --build . --config Release; .\physics_app.exe
+mkdir build; cd build; cmake -DUSE_SFML=ON -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..; cmake --build . --config Release; .\physics_app.exe
 ```
