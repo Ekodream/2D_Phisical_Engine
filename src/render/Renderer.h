@@ -61,26 +61,6 @@ private:
 } // namespace engine
 
 #else
-// Stub implementation when SFML is disabled
-namespace engine {
-class Renderer {
-public:
-    Renderer(int w = 1024, int h = 768, const char* t = "") : windowWidth(w), windowHeight(h) {}
-    ~Renderer() {}
-    bool isOpen() const { return false; }
-    void clear() {}
-    void display() {}
-    void handleEvents() {}
-    void drawCircle(const engine::Vector2&, double, ...) {}
-    void drawRect(const engine::Vector2&, double, double, ...) {}
-    void drawLine(const engine::Vector2&, const engine::Vector2&, ...) {}
-    void drawText(const std::string&, float, float, ...) {}
-    void drawPointMass(const engine::PointMass&, ...) {}
-    void drawVelocityVector(const engine::PointMass&, ...) {}
-private:
-    int windowWidth;
-    int windowHeight;
-};
-} // namespace engine
+#error "SFML renderer disabled — build with -DUSE_SFML=ON in CMake to enable GUI support."
 
 #endif
