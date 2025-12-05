@@ -3,16 +3,12 @@
 #include "core/Math/Vector2.h"
 #include "core/Physics/Body.h"
 #include "core/Physics/Collision.h"
-
-#ifdef ENABLE_SFML
 #include "render/Renderer.h"
-#endif
 
 int main() {
     std::cout << "2D Physical Engine - Phase 1\n";
 
-#ifdef ENABLE_SFML
-    // ===== SFML-enabled mode: interactive GUI =====
+    // ===== SFML-enabled mode: interactive GUI (SFML is required) =====
     std::cout << "Running with SFML renderer.\n";
     engine::Renderer renderer(1024, 768, "2D Physics Engine");
     // Interactive objects container
@@ -118,7 +114,7 @@ int main() {
             for (auto &obj : objects) {
                 if (obj.position.y > 700) {
                     obj.position.y = 700;
-                    obj.velocity.y *= -0.8;
+                    obj.velocity.y *= -1;
                 }
             }
         }
@@ -154,22 +150,6 @@ int main() {
 
         renderer.display();
     }
-
-#else
-    // ===== Non-SFML mode: simple numerical output =====
-    std::cout << "Running without SFML (non-visual mode).\n";
-    std::cout << "Compile with -DUSE_SFML=ON for interactive rendering.\n\n";
-
-    engine::PointMass p({0.0, 0.0}, {1.0, 0.0}, 1.0);
-    engine::Vector2 gravity(0.0, 9.8);
-
-    for (int i = 0; i < 10; ++i) {
-        p.applyForce(gravity * p.mass, 0.1);
-        p.integrate(0.1);
-        std::cout << "Step " << i << ": pos=(" << p.position.x << ", " << p.position.y << "), "
-                  << "vel=(" << p.velocity.x << ", " << p.velocity.y << ")\n";
-    }
-#endif
 
     return 0;
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#ifdef ENABLE_SFML
 #include <SFML/Graphics.hpp>
 #include "../core/Math/Vector2.h"
 #include "../core/Physics/Body.h"
@@ -59,8 +58,3 @@ private:
 };
 
 } // namespace engine
-
-#else
-#error "SFML renderer disabled — build with -DUSE_SFML=ON in CMake to enable GUI support."
-
-#endif

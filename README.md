@@ -5,8 +5,8 @@ A simple 2D physics engine in C++ with an SFML-based interactive viewer.
 This repository contains a minimal physics core (point masses), a simple collision resolver
 for circle-circle contacts, and an SFML renderer + input to experiment interactively.
 
-IMPORTANT: This build requires SFML to be enabled. The renderer header intentionally
-errors at compile time when SFML is not enabled. Build with `-DUSE_SFML=ON` in CMake.
+IMPORTANT: This build requires SFML. The project is configured to find and link
+SFML at configure time (via vcpkg or a local SFML installation).
 
 ## Features
 
@@ -39,7 +39,7 @@ Example using vcpkg (adjust the vcpkg path to your installation):
 ```powershell
 cd D:\Documents\CS\Projects\2D_Phisical_Engine
 mkdir build; cd build
-cmake -DUSE_SFML=ON -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..
+cmake -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..
 cmake --build . --config Release
 ```
 
@@ -47,7 +47,7 @@ Or if you installed SFML manually:
 
 ```powershell
 cd D:\Documents\CS\Projects\2D_Phisical_Engine\build
-cmake -DUSE_SFML=ON -DSFML_DIR="C:\Path\To\SFML\lib\cmake\SFML" ..
+cmake -DSFML_DIR="C:\Path\To\SFML\lib\cmake\SFML" ..
 cmake --build . --config Release
 ```
 
@@ -148,14 +148,14 @@ cd C:\vcpkg
 If using **vcpkg**:
 ```powershell
 cd D:\Documents\CS\Projects\2D_Phisical_Engine\build
-cmake -DUSE_SFML=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+cmake -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake ..
 cmake --build . --config Release
 ```
 
 If using **manual SFML**:
 ```powershell
 cd D:\Documents\CS\Projects\2D_Phisical_Engine\build
-cmake -DUSE_SFML=ON -DSFML_DIR="C:\SFML-2.6.0\lib\cmake\SFML" ..
+cmake -DSFML_DIR="C:\SFML-2.6.0\lib\cmake\SFML" ..
 cmake --build . --config Release
 ```
 
@@ -213,23 +213,16 @@ Prints a numerical integration sequence.
 
 ## Notes
 
-- SFML is optional; the engine works without it for headless physics simulation.
-- `ENABLE_SFML` macro gates all SFML code; stubs exist when disabled.
+ - SFML is required; the project is built and tested with SFML 3 via vcpkg or a local SFML installation.
 - Time step is fixed at 1/60s for stability.
 
 ## Building & Running (Quick Recap)
 
-**No GUI:**
-```powershell
-mkdir build; cd build; cmake ..; cmake --build . --config Release; .\physics_app.exe
-```
-
-**With GUI (vcpkg):**
-
-
-"You need change the path of vcpkg to your own path"
-
+**Build & Run (example using vcpkg):**
 
 ```powershell
-mkdir build; cd build; cmake -DUSE_SFML=ON -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..; cmake --build . --config Release; .\physics_app.exe
+mkdir build; cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..
+cmake --build . --config Release
+.\Release\physics_app.exe
 ```

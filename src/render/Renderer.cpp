@@ -4,8 +4,6 @@
 #include <filesystem>
 #include <optional>
 
-#ifdef ENABLE_SFML
-
 namespace engine {
 
 Renderer::Renderer(int width, int height, const char* title)
@@ -192,5 +190,3 @@ void Renderer::drawCircleOutline(const Vector2& center, double radius, const sf:
 }
 
 } // namespace engine
-
-#endif

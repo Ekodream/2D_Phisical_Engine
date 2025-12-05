@@ -4,7 +4,7 @@
 
 仓库内容：质点物理核心、圆形碰撞检测与冲量响应、以及基于 SFML 的渲染与输入交互。
 
-重要说明：当前代码要求启用 SFML（渲染器头文件在未启用 SFML 时会触发编译错误）。使用 CMake 构建时请传入 `-DUSE_SFML=ON`。
+重要说明：当前代码要求 SFML。项目在配置时会查找并链接 SFML（可通过 vcpkg 或本地 SFML 安装）。
 
 ## 功能
 
@@ -37,7 +37,7 @@
 ```powershell
 cd D:\Documents\CS\Projects\2D_Phisical_Engine
 mkdir build; cd build
-cmake -DUSE_SFML=ON -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..
+cmake -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..
 cmake --build . --config Release
 ```
 
@@ -45,7 +45,7 @@ cmake --build . --config Release
 
 ```powershell
 cd D:\Documents\CS\Projects\2D_Phisical_Engine\build
-cmake -DUSE_SFML=ON -DSFML_DIR="C:\Path\To\SFML\lib\cmake\SFML" ..
+cmake -DSFML_DIR="C:\Path\To\SFML\lib\cmake\SFML" ..
 cmake --build . --config Release
 ```
 
