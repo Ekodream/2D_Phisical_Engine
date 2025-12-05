@@ -1,3 +1,93 @@
+# 2D_Physical_Engine
+
+A simple 2D physics engine in C++ with an SFML-based interactive viewer.
+
+This repository contains a minimal physics core (point masses), a simple collision resolver
+for circle-circle contacts, and an SFML renderer + input to experiment interactively.
+
+IMPORTANT: This build requires SFML to be enabled. The renderer header intentionally
+errors at compile time when SFML is not enabled. Build with `-DUSE_SFML=ON` in CMake.
+
+## Features
+
+- Vector2 math helper
+- PointMass physics (position, velocity, mass, radius, restitution)
+- Pairwise circle-circle collision detection & impulse response
+- SFML-based renderer with interactive controls (spawn, drag-to-throw, select, adjust)
+
+## Controls (when running with GUI)
+
+- Left-click: spawn a new point mass at the cursor (uses current radius/restitution)
+- Drag (left-button): spawn with initial velocity proportional to drag vector
+- Right-click: select nearest object (within ~30 px)
+- R / F : increase / decrease spawn radius (and apply to selected object)
+- T / G : increase / decrease restitution (and apply to selected object)
+- Space : pause / resume simulation
+- ESC   : quit
+
+Selected object is highlighted in yellow and an outline shows its collision radius.
+
+## Build (Windows example)
+
+Prerequisites:
+- CMake 3.10+
+- A C++17-capable compiler (MSVC recommended on Windows)
+- SFML (via vcpkg or manual install)
+
+Example using vcpkg (adjust the vcpkg path to your installation):
+
+```powershell
+cd D:\Documents\CS\Projects\2D_Phisical_Engine
+mkdir build; cd build
+cmake -DUSE_SFML=ON -DCMAKE_TOOLCHAIN_FILE=D:\Programs\vcpkg-master\scripts\buildsystems\vcpkg.cmake ..
+cmake --build . --config Release
+```
+
+Or if you installed SFML manually:
+
+```powershell
+cd D:\Documents\CS\Projects\2D_Phisical_Engine\build
+cmake -DUSE_SFML=ON -DSFML_DIR="C:\Path\To\SFML\lib\cmake\SFML" ..
+cmake --build . --config Release
+```
+
+Run:
+
+```powershell
+.\Release\physics_app.exe
+```
+
+## Project layout
+
+```
+2D_Physical_Engine/
+├── CMakeLists.txt
+├── README.md
+├── README.zh.md          # Chinese README
+├── src/
+│   ├── main.cpp          # entry point and interactive loop
+│   ├── core/
+│   │   ├── Math/
+│   │   │   ├── Vector2.h
+│   │   │   └── Vector2.cpp
+│   │   └── Physics/
+│   │       ├── Body.h
+│   │       ├── Collision.h
+│   │       └── Collision.cpp
+│   └── render/
+│       ├── Renderer.h
+│       └── Renderer.cpp
+└── build/                 # out-of-tree build directory
+```
+
+## Notes
+
+- The renderer currently targets SFML 3 (vcpkg's current package). The code adapts to
+  the SFML 3 API (VideoMode, Event, Text signatures). If you must use SFML 2.5, additional
+  conditional compatibility work will be needed.
+- Physics uses a fixed timestep (1/60). For better stability with many fast objects, consider
+  sub-stepping or a more stable integrator (semi-implicit Euler or Verlet).
+- Next work items: performance tuning, friction, rigid-body rotation, polygon collisions.
 # 2D Physical Engine (Phase 1)
 
 A simple 2D physics engine in C++ with optional SFML rendering.
