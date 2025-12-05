@@ -8,11 +8,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_SFML "Enable SFML rendering" OFF)
 
 if(USE_SFML)
-    # Try to find SFML in system paths
-    find_package(SFML 2.5 COMPONENTS graphics window system)
+    # Try to find SFML in system paths (accept any installed SFML version)
+    # Components are case-sensitive in the SFMLConfig provided by vcpkg
+    find_package(SFML COMPONENTS Graphics Window System)
     if(NOT SFML_FOUND)
         message(STATUS "SFML not found in system paths.")
-        message(STATUS "Please install SFML or set SFML_DIR to your SFML build directory.")
+        message(STATUS "Please install SFML via vcpkg or set SFML_DIR to your SFML installation's CMake directory.")
         message(FATAL_ERROR "SFML requested but not found. Install SFML or disable USE_SFML.")
     endif()
     message(STATUS "SFML found: ${SFML_INCLUDE_DIR}")
@@ -34,6 +35,7 @@ add_executable(physics_app ${SOURCES})
 target_include_directories(physics_app PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 if(USE_SFML)
-    target_link_libraries(physics_app PRIVATE sfml-graphics sfml-window sfml-system)
+    # Prefer the imported SFML:: targets provided by the SFMLConfig.cmake
+    target_link_libraries(physics_app PRIVATE SFML::Graphics SFML::Window SFML::System)
     target_compile_definitions(physics_app PRIVATE ENABLE_SFML=1)
 endif()

@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <iostream>
 #include <cmath>
+#include <filesystem>
 
 #ifdef ENABLE_SFML
 
@@ -9,8 +10,8 @@ namespace engine {
 Renderer::Renderer(int width, int height, const char* title)
     : windowWidth(width), windowHeight(height) {
     window = std::make_unique<sf::RenderWindow>(
-        sf::VideoMode(width, height),
-        title
+        sf::VideoMode(sf::Vector2u(static_cast<unsigned int>(width), static_cast<unsigned int>(height))),
+        sf::String(title)
     );
     window->setFramerateLimit(60);
     loadFont();
@@ -32,8 +33,12 @@ bool Renderer::loadFont() {
     };
 
     for (const auto& path : fontPaths) {
-        if (font.loadFromFile(path)) {
-            return true;
+        try {
+            if (font.openFromFile(std::filesystem::path(path))) {
+                return true;
+            }
+        } catch (...) {
+            // ignore
         }
     }
 
@@ -56,14 +61,16 @@ void Renderer::display() {
 void Renderer::handleEvents() {
     if (!window) return;
 
-    sf::Event event;
-    while (window->pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
+    while (const std::optional<sf::Event> eventOpt = window->pollEvent()) {
+        const sf::Event& event = *eventOpt;
+        if (event.is<sf::Event::Closed>()) {
             window->close();
         }
-        if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Escape) {
-                window->close();
+        if (event.is<sf::Event::KeyPressed>()) {
+            if (const auto* kp = event.getIf<sf::Event::KeyPressed>()) {
+                if (kp->code == sf::Keyboard::Key::Escape) {
+                    window->close();
+                }
             }
         }
     }
@@ -73,10 +80,8 @@ void Renderer::drawCircle(const Vector2& center, double radius, const sf::Color&
     if (!window) return;
 
     sf::CircleShape circle(static_cast<float>(radius));
-    circle.setPosition(
-        static_cast<float>(center.x - radius),
-        static_cast<float>(center.y - radius)
-    );
+    circle.setPosition(sf::Vector2f(static_cast<float>(center.x - radius),
+                                    static_cast<float>(center.y - radius)));
     circle.setFillColor(color);
     window->draw(circle);
 }
@@ -85,7 +90,7 @@ void Renderer::drawRect(const Vector2& pos, double width, double height, const s
     if (!window) return;
 
     sf::RectangleShape rect(sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
-    rect.setPosition(static_cast<float>(pos.x), static_cast<float>(pos.y));
+    rect.setPosition(sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
     rect.setFillColor(color);
     window->draw(rect);
 }
@@ -93,20 +98,21 @@ void Renderer::drawRect(const Vector2& pos, double width, double height, const s
 void Renderer::drawLine(const Vector2& from, const Vector2& to, const sf::Color& color) {
     if (!window) return;
 
-    sf::Vertex line[] = {
-        sf::Vertex(sf::Vector2f(static_cast<float>(from.x), static_cast<float>(from.y)), color),
-        sf::Vertex(sf::Vector2f(static_cast<float>(to.x), static_cast<float>(to.y)), color)
-    };
-    window->draw(line, 2, sf::Lines);
+    sf::Vertex line[2];
+    line[0].position = sf::Vector2f(static_cast<float>(from.x), static_cast<float>(from.y));
+    line[0].color = color;
+    line[1].position = sf::Vector2f(static_cast<float>(to.x), static_cast<float>(to.y));
+    line[1].color = color;
+    window->draw(line, 2, sf::PrimitiveType::Lines);
 }
 
 void Renderer::drawText(const std::string& text, float x, float y, const sf::Color& color) {
     if (!window) return;
 
-    sf::Text sfText(text, font);
-    sfText.setPosition(x, y);
+    // SFML 3: constructor signature is (const sf::Font&, sf::String, unsigned int)
+    sf::Text sfText(font, sf::String(text), 14u);
+    sfText.setPosition(sf::Vector2f(x, y));
     sfText.setFillColor(color);
-    sfText.setCharacterSize(14);
     window->draw(sfText);
 }
 
