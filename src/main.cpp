@@ -8,7 +8,7 @@
 int main() {
     std::cout << "2D Physical Engine - Phase 1\n";
 
-    // ===== SFML-enabled mode: interactive GUI (SFML is required) =====
+
     std::cout << "Running with SFML renderer.\n";
     engine::Renderer renderer(1024, 768, "2D Physics Engine");
     // Interactive objects container

@@ -29,7 +29,7 @@ public:
     void drawVelocityVector(const PointMass& p, double scale = 1.0, const sf::Color& color = sf::Color::Red);
     void drawCircleOutline(const Vector2& center, double radius, const sf::Color& color = sf::Color::White, float thickness = 2.0f);
 
-    // Input events (mouse click, mouse drag, key press)
+    // Input events
     enum class InputType { None, MouseClick, MouseDrag, KeyPressed };
     struct InputEvent {
         InputType type = InputType::None;
@@ -39,7 +39,7 @@ public:
         int mouseButton = -1;      // for Mouse events: sf::Mouse::Button
     };
 
-    // Poll the next input event (if any). Returns std::nullopt when none available.
+    // Poll the next input event
     std::optional<InputEvent> pollInput();
 
 private:
@@ -57,4 +57,4 @@ private:
     int mouseDownButton = -1;
 };
 
-} // namespace engine
+}

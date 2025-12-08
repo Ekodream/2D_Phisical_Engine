@@ -1,3 +1,4 @@
+//This part is finished with the help of the official documents and AI
 #include "Renderer.h"
 #include <iostream>
 #include <cmath>
@@ -189,4 +190,4 @@ void Renderer::drawCircleOutline(const Vector2& center, double radius, const sf:
     window->draw(circle);
 }
 
-} // namespace engine
+}
